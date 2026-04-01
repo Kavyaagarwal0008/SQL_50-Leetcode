@@ -192,3 +192,106 @@ HAVING COUNT(DISTINCT product_key) = (
     SELECT COUNT(*) FROM Product
 );
 ```
+
+# Advanced Select and Joins
+
+## Q30 - [The Number of Employess Which Report to Each Employee](https://leetcode.com/problems/the-number-of-employees-which-report-to-each-employee/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT e.employee_id,e.name,
+COUNT(r.employee_id) AS reports_count,
+ROUND(AVG(r.age)) AS average_age
+
+FROM Employees e
+JOIN Employees r
+ON e.employee_id=r.reports_to
+GROUP BY e.employee_id,e.name
+ORDER BY e.employee_id;
+```
+## Q31 - [Primary Department for Each Employee](https://leetcode.com/problems/primary-department-for-each-employee/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT employee_id, department_id FROM Employee WHERE employee_id IN (
+SELECT employee_id FROM Employee
+GROUP BY employee_id HAVING COUNT(*) =1) OR primary_flag = 'Y'
+```
+## Q32 - [Triangle Judgement](https://leetcode.com/problems/triangle-judgement/description/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT *,
+    CASE 
+        WHEN GREATEST(x, y, z) < (x + y + z - GREATEST(x, y, z)) THEN 'Yes'
+        ELSE 'No'
+    END AS triangle
+FROM Triangle;
+```
+## Q33 - [Consecutive Numbers](https://leetcode.com/problems/consecutive-numbers/description/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+
+```
+## Q34 - []()
+```sql
+
+```
+## Q35 - []()
+```sql
+
+```
+## Q36 - []()
+```sql
+
+```
+## Q37 - []()
+```sql
+
+```
+## Q38 - []()
+```sql
+
+```
+## Q39 - []()
+```sql
+
+```
+## Q40 - []()
+```sql
+
+```
+## Q41 - []()
+```sql
+
+```
+## Q42 - []()
+```sql
+
+```
+## Q43 - []()
+```sql
+
+```
+## Q44 - []()
+```sql
+
+```
+## Q45 - []()
+```sql
+
+```
+## Q46 - []()
+```sql
+
+```
+## Q47 - []()
+```sql
+
+```
+## Q48 - []()
+```sql
+
+```
+## Q49 - []()
+```sql
+
+```
+## Q50 - []()
+```sql
+
+```
+
