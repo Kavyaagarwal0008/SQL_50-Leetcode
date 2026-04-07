@@ -272,32 +272,73 @@ AND manager_id NOT IN (
 )
 ORDER BY employee_id;
 ```
-## Q44 - [Fix Names in a Table]()
+## Q44 - [Fix Names in a Table](https://leetcode.com/problems/fix-names-in-a-table/?envType=study-plan-v2&envId=top-sql-50)
 ```sql
+SELECT user_id, CONCAT(UPPER(LEFT(name, 1)), LOWER(SUBSTRING(name, 2))) AS name
+FROM Users
+ORDER BY user_id;
+```
+## Q45 - [Patients With a Condittion](https://leetcode.com/problems/patients-with-a-condition/description/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT * 
+FROM Patients
+WHERE conditions LIKE 'DIAB1%'
+OR conditions LIKE '% DIAB1%';
+
+-- Using REGEXP
+-- SELECT* FROM Patients
+-- WHERE conditions REGEXP '(^| )DIAB1';
+```
+## Q46 - [Delete Duplicate Emails](https://leetcode.com/problems/delete-duplicate-emails?envType=study-plan-v2&envId=top-sql-50)
+```sql
+
+DELETE p1 FROM Person p1
+JOIN Person p2 
+ON p1.email = p2.email AND p1.id > p2.id;
 
 ```
-## Q45 - [Patients With a Condittion]()
+## Q47 - [Second Highest Salary](https://leetcode.com/problems/second-highest-salary/description/?envType=study-plan-v2&envId=top-sql-50)
 ```sql
+Select DISTINCT MAX(salary) as SecondHighestSalary
+FROM Employee
+WHERE salary <>
+(SELECT DISTINCT MAX(salary) FROM Employee);
 
 ```
-## Q46 - [Delete Duplicate Emails]()
+## Q48 - [Group Sold Products By the Date](https://leetcode.com/problems/group-sold-products-by-the-date/description/?envType=study-plan-v2&envId=top-sql-50)
 ```sql
+SELECT 
+sell_date , 
+COUNT(DISTINCT product) AS num_sold, 
+GROUP_CONCAT(DISTINCT product ORDER BY product SEPARATOR ',') as products
+FROM Activities
 
+GROUP BY sell_date
+ORDER BY sell_date;
 ```
-## Q47 - [Second Highest Salary]()
+## Q49 - [List the Products Ordered in a Period](https://leetcode.com/problems/list-the-products-ordered-in-a-period?envType=study-plan-v2&envId=top-sql-50)
 ```sql
+SELECT p.product_name, SUM(o.unit) AS unit
+FROM Products p
+JOIN Orders o
+on p.product_id=o.product_id
 
+WHERE o.order_date BETWEEN '2020-02-01'
+AND '2020-02-29'
+
+GROUP BY p.product_id, p.product_name
+HAVING SUM(o.unit)>=100;
 ```
-## Q48 - [Group Sold Products By the Date]()
+## Q50 - [Find Users with Valid E-Mails](https://leetcode.com/problems/find-users-with-valid-e-mails/description/?envType=study-plan-v2&envId=top-sql-50)
 ```sql
-
-```
-## Q49 - [List the Products Ordered in a Period]()
-```sql
-
-```
-## Q50 - [Find Users with Valid E-Mails]()
-```sql
-
+SELECT 
+    user_id, 
+    name, 
+    mail
+FROM 
+    users
+WHERE 
+    mail REGEXP '^[a-zA-Z][a-zA-Z0-9_.-]*@leetcode\\.com$' 
+    AND mail LIKE BINARY '%@leetcode.com';
 ```
 
