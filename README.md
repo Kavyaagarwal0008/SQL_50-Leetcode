@@ -238,59 +238,65 @@ FROM Triangle;
 ```sql
 
 ```
-## Q37 - []()
+## Q37 - [Employees Whose Manager Left the Company](https://leetcode.com/problems/employees-whose-manager-left-the-company/?envType=study-plan-v2&envId=top-sql-50)
 ```sql
 
 ```
-## Q38 - []()
+## Q38 - [Exchange Seats]()
 ```sql
 
 ```
-## Q39 - []()
+## Q39 - [Movie Rating]()
 ```sql
 
 ```
-## Q40 - []()
+## Q40 - [Restaurant Growth]()
 ```sql
 
 ```
-## Q41 - []()
+## Q41 - [Friend Requests II: Who Has the Most Friends]()
 ```sql
 
 ```
-## Q42 - []()
+## Q42 - [Investments in 2016](https://leetcode.com/problems/investments-in-2016/?envType=study-plan-v2&envId=top-sql-50)
 ```sql
 
 ```
-## Q43 - []()
+## Q43 - [Department Top Three Salaries](https://leetcode.com/problems/employees-whose-manager-left-the-company/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT employee_id
+FROM Employees
+WHERE salary < 30000
+AND manager_id NOT IN (
+    SELECT employee_id FROM Employees
+)
+ORDER BY employee_id;
+```
+## Q44 - [Fix Names in a Table]()
 ```sql
 
 ```
-## Q44 - []()
+## Q45 - [Patients With a Condittion]()
 ```sql
 
 ```
-## Q45 - []()
+## Q46 - [Delete Duplicate Emails]()
 ```sql
 
 ```
-## Q46 - []()
+## Q47 - [Second Highest Salary]()
 ```sql
 
 ```
-## Q47 - []()
+## Q48 - [Group Sold Products By the Date]()
 ```sql
 
 ```
-## Q48 - []()
+## Q49 - [List the Products Ordered in a Period]()
 ```sql
 
 ```
-## Q49 - []()
-```sql
-
-```
-## Q50 - []()
+## Q50 - [Find Users with Valid E-Mails]()
 ```sql
 
 ```
