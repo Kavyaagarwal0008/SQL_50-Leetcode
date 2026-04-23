@@ -127,6 +127,120 @@ GROUP BY s.user_id;
 
 ```
 
+# Basic Aggregaate Functions
+
+## Q15- [Not Boring Movies](https://leetcode.com/problems/not-boring-movies/description/?envType=study-plan-v2&envId=top-sql-50)
+
+```sql
+SELECT * FROM Cinema
+WHERE (id%2!=0) AND description!='boring'
+ORDER BY rating DESC;
+```
+
+## Q16- [Avergae Selling Price](https://leetcode.com/problems/average-selling-price/description/?envType=study-plan-v2&envId=top-sql-50)
+
+```sql
+SELECT p.product_id ,
+    ROUND(
+        IFNULL(
+            SUM(p.price* u.units) / SUM(u.units) ,0
+        ),2
+    ) AS average_price
+FROM Prices p
+LEFT JOIN UnitsSold u
+ON p.product_id=u.product_id
+AND u.purchase_date BETWEEN p.start_date AND p.end_date
+GROUP BY p.product_id;
+
+```
+
+## Q17- [Project Employees I](https://leetcode.com/problems/project-employees-i/description/?envType=study-plan-v2&envId=top-sql-50)
+
+```sql
+SELECT p.project_id , ROUND(
+    AVG(e.experience_years),2
+) AS average_years
+FROM Project p
+JOIN Employee e
+ON p.employee_id=e.employee_id
+GROUP BY p.project_id;
+```
+
+## Q18- [Percentage of Users Attended a Contest](https://leetcode.com/problems/percentage-of-users-attended-a-contest/?envType=study-plan-v2&envId=top-sql-50)
+
+```sql
+SELECT r.contest_id , ROUND(
+    COUNT(DISTINCT r.user_id)*100.0 / (SELECT COUNT(*) FROM Users),2
+) AS percentage
+
+FROM Register r
+GROUP BY r.contest_id
+ORDER BY percentage DESC, r.contest_id ASC;
+```
+
+## Q19- [Queries Quality and Percentage](https://leetcode.com/problems/queries-quality-and-percentage/description/?envType=study-plan-v2&envId=top-sql-50)
+
+```sql
+SELECT query_name , ROUND(
+    AVG(rating/position),2
+) AS quality, 
+ROUND(
+    SUM(rating<3) * 100.0 / COUNT(*),2
+) AS poor_query_percentage
+
+FROM Queries
+WHERE query_name IS NOT NULL
+GROUP BY query_name;
+```
+
+## Q20- [Monthly Transactions I](https://leetcode.com/problems/monthly-transactions-i/?envType=study-plan-v2&envId=top-sql-50)
+
+```sql
+SELECT 
+DATE_FORMAT(trans_date, '%Y-%m') AS month,
+country,
+COUNT(*) AS trans_count,
+SUM(state='approved')AS approved_count,
+SUM(amount) AS trans_total_amount,
+SUM(
+    IF(
+        state='approved',amount , 0
+    )
+)AS approved_total_amount
+
+
+FROM Transactions
+GROUP BY month, country;
+```
+
+## Q21- [Immediate Food Delivery II](https://leetcode.com/problems/immediate-food-delivery-ii/description/?envType=study-plan-v2&envId=top-sql-50)
+
+```sql
+SELECT 
+    ROUND(
+        AVG(order_date = customer_pref_delivery_date) * 100,
+    2) AS immediate_percentage
+FROM Delivery
+WHERE (customer_id, order_date) IN (
+    SELECT customer_id, MIN(order_date)
+    FROM Delivery
+    GROUP BY customer_id
+);
+```
+
+## Q22- [Game Play Analysis IV](https://leetcode.com/problems/game-play-analysis-iv/description/?envType=study-plan-v2&envId=top-sql-50)
+
+```sql
+SELECT
+  ROUND(COUNT(DISTINCT player_id) / (SELECT COUNT(DISTINCT player_id) FROM Activity), 2) AS fraction
+FROM
+  Activity
+WHERE
+  (player_id, DATE_SUB(event_date, INTERVAL 1 DAY))
+  IN (
+    SELECT player_id, MIN(event_date) AS first_login FROM Activity GROUP BY player_id
+  )
+```
 # Sorting and Grouping
 
 ## Q23- [Number of Unique Subjects Taught by Each Teacher](https://leetcode.com/problems/number-of-unique-subjects-taught-by-each-teacher/description/?envType=study-plan-v2&envId=top-sql-50)
