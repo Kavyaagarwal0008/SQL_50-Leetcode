@@ -338,45 +338,71 @@ FROM Triangle;
 ```
 ## Q33 - [Consecutive Numbers](https://leetcode.com/problems/consecutive-numbers/description/?envType=study-plan-v2&envId=top-sql-50)
 ```sql
-
+SELECT DISTINCT l1.num AS ConsecutiveNums
+FROM Logs l1
+JOIN Logs l2
+    ON l1.id = l2.id - 1
+JOIN Logs l3
+    ON l2.id = l3.id - 1
+WHERE l1.num = l2.num
+  AND l2.num = l3.num;
 ```
-## Q34 - []()
+## Q34 - [Product Price at Given Date](https://leetcode.com/problems/product-price-at-a-given-date/description/?envType=study-plan-v2&envId=top-sql-50)
 ```sql
+SELECT p.product_id, COALESCE(u.new_price,10) AS price
+FROM(
+    SELECT DISTINCT product_id
+    FROM Products
+) p
+LEFT JOIN
+(
+    SELECT product_id, new_price
+    FROM Products
+    WHERE(product_id,change_date) IN 
+    (
+        SELECT product_id, MAX(change_date)
+        FROM Products
+        WHERE change_date <= '2019-08-16'
+        GROUP BY product_id
+    )
+)u
 
+ON p.product_id=u.product_id;
 ```
-## Q35 - []()
+## Q35 - [Last Person to Fit in the Bus](https://leetcode.com/problems/last-person-to-fit-in-the-bus/description/?envType=study-plan-v2&envId=top-sql-50)
 ```sql
-
+SELECT person_name
+FROM (
+    SELECT person_name,
+    SUM(weight) OVER (ORDER BY turn) AS total_weight
+    FROM Queue
+) t
+WHERE total_weight <=1000
+ORDER BY total_weight DESC
+LIMIT 1;
 ```
-## Q36 - []()
+## Q36 - [Count Salary Categories](https://leetcode.com/problems/count-salary-categories/description/?envType=study-plan-v2&envId=top-sql-50)
 ```sql
+SELECT 'Low Salary' AS category, COUNT(*) AS accounts_count
+FROM Accounts
+WHERE income < 20000
 
+UNION
+
+SELECT 'Average Salary' AS category, COUNT(*) AS accounts_count
+FROM Accounts
+WHERE income >= 20000 AND income <=50000
+
+UNION
+
+SELECT 'High Salary' AS category, COUNT(*) AS accounts_count
+FROM Accounts
+WHERE income > 50000;
 ```
+
+# Subqueries
+
 ## Q37 - [Employees Whose Manager Left the Company](https://leetcode.com/problems/employees-whose-manager-left-the-company/?envType=study-plan-v2&envId=top-sql-50)
-```sql
-
-```
-## Q38 - [Exchange Seats]()
-```sql
-
-```
-## Q39 - [Movie Rating]()
-```sql
-
-```
-## Q40 - [Restaurant Growth]()
-```sql
-
-```
-## Q41 - [Friend Requests II: Who Has the Most Friends]()
-```sql
-
-```
-## Q42 - [Investments in 2016](https://leetcode.com/problems/investments-in-2016/?envType=study-plan-v2&envId=top-sql-50)
-```sql
-
-```
-## Q43 - [Department Top Three Salaries](https://leetcode.com/problems/employees-whose-manager-left-the-company/?envType=study-plan-v2&envId=top-sql-50)
 ```sql
 SELECT employee_id
 FROM Employees
@@ -386,6 +412,124 @@ AND manager_id NOT IN (
 )
 ORDER BY employee_id;
 ```
+## Q38 - [Exchange Seats](https://leetcode.com/problems/exchange-seats/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT 
+    CASE
+        WHEN id%2=1 AND id!= (SELECT MAX(id) FROM seat) THEN id+1
+        WHEN id%2=0 THEN id-1
+        ELSE id
+    END AS id,
+    student
+FROM seat
+ORDER BY id;
+```
+## Q39 - [Movie Rating](https://leetcode.com/problems/movie-rating/description/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+(
+    SELECT u.name AS results
+    FROM MovieRating mr
+    JOIN Users u
+    ON mr.user_id = u.user_id
+    GROUP BY mr.user_id
+    ORDER BY COUNT(*) DESC, u.name
+    LIMIT 1
+)
+
+UNION ALL
+
+(
+    SELECT m.title AS results
+    FROM MovieRating mr
+    JOIN Movies m
+    ON mr.movie_id = m.movie_id
+    WHERE DATE_FORMAT(created_at, '%Y-%m') = '2020-02'
+    GROUP BY mr.movie_id
+    ORDER BY AVG(rating) DESC, m.title
+    LIMIT 1
+);
+```
+## Q40 - [Restaurant Growth](https://leetcode.com/problems/restaurant-growth/description/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT visited_on,
+       SUM(amount) OVER(
+           ORDER BY visited_on
+           ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+       ) AS amount,
+       ROUND(
+           AVG(amount) OVER(
+               ORDER BY visited_on
+               ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+           ), 2
+       ) AS average_amount
+FROM
+(
+    SELECT visited_on,
+           SUM(amount) AS amount
+    FROM Customer
+    GROUP BY visited_on
+) t
+LIMIT 1000000 OFFSET 6;
+```
+## Q41 - [Friend Requests II: Who Has the Most Friends](https://leetcode.com/problems/friend-requests-ii-who-has-the-most-friends/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT id,
+       COUNT(*) AS num
+FROM
+(
+    SELECT requester_id AS id
+    FROM RequestAccepted
+
+    UNION ALL
+
+    SELECT accepter_id AS id
+    FROM RequestAccepted
+) t
+GROUP BY id
+ORDER BY num DESC
+LIMIT 1;
+```
+## Q42 - [Investments in 2016](https://leetcode.com/problems/investments-in-2016/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT ROUND(SUM(tiv_2016), 2) AS tiv_2016
+FROM Insurance
+WHERE tiv_2015 IN
+(
+    SELECT tiv_2015
+    FROM Insurance
+    GROUP BY tiv_2015
+    HAVING COUNT(*) > 1
+)
+AND (lat, lon) IN
+(
+    SELECT lat, lon
+    FROM Insurance
+    GROUP BY lat, lon
+    HAVING COUNT(*) = 1
+);
+```
+## Q43 - [Department Top Three Salaries](https://leetcode.com/problems/employees-whose-manager-left-the-company/?envType=study-plan-v2&envId=top-sql-50)
+```sql
+SELECT d.name AS Department,
+       e.name AS Employee,
+       e.salary AS Salary
+FROM
+(
+    SELECT *,
+           DENSE_RANK() OVER
+           (
+               PARTITION BY departmentId
+               ORDER BY salary DESC
+           ) AS rnk
+    FROM Employee
+) e
+JOIN Department d
+ON e.departmentId = d.id
+WHERE e.rnk <= 3;
+```
+
+# Advanced String Functions / Regex / Clause
+
 ## Q44 - [Fix Names in a Table](https://leetcode.com/problems/fix-names-in-a-table/?envType=study-plan-v2&envId=top-sql-50)
 ```sql
 SELECT user_id, CONCAT(UPPER(LEFT(name, 1)), LOWER(SUBSTRING(name, 2))) AS name
